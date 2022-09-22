@@ -3,40 +3,176 @@ require('dotenv').config()
 const app = express();
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const ObjectId= require ('mongodb').ObjectId
+const admin = require("firebase-admin");
 
-const port =process.env.PORT || 5000;
+
+const serviceAccount = require("./doctors-portal-firebase-adminsdk.json");
+const { query } = require('express');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+
+
+const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.9hokh.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
-// const uri = "mongodb+srv://<username>:<password>@cluster0.9hokh.mongodb.net/?retryWrites=true&w=majority";
-
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-app.get("/", (req, res) => {
-    res.send('xyz')
-});
 
-async function run() {
-    
-    try {
-        const database = client.db("DoctorsPortal");
-        const haiku = database.collection("Service");
-        // create a document to insert
-        const doc = {
-            title: "Record of a Shriveled Datum",
-            content: "No bytes, no problem. Just insert a document, in MongoDB",
+const tokenVerify = async (req, res, next) => {
+
+    if (req.headers?.authorization?.startsWith("Bearer ")) {
+        const token = req.headers.authorization.split(' ')[1];
+        // console.log('verify TOken')
+
+        try {
+            const decodedUser = await admin.auth().verifyIdToken(token);
+            // console.log("decodeUser", decodedUser)
+            req.decodedEmail = decodedUser.email;
+            // console.log("from tokenVerify ", req.decodedEmail);
+
         }
-        const result = await haiku.insertOne(doc);
-        console.log(`A document was inserted with the _id: ${result.insertedId}`);
-    } finally {
+        catch {
+
+        }
+    }
+    next()
+
+}
+async function run() {
+
+    const database = client.db("DoctorsPortal");
+    const service = database.collection("Service");
+    const appointmentCollecton = database.collection("appointment");
+    const usersCollecton = database.collection("users");
+
+    try {
+
+        // ...........................................
+        // Added Service  from modal submit
+        // ...........................................
+        app.post('/appointment', async (req, res) => {
+            const appointment = req.body;
+            const result = await appointmentCollecton.insertOne(appointment)
+            // console.log(result);
+            res.json(result)
+        })
+
+        // ...........................................
+        // modal added Service showing other Route 
+        // ...........................................
+        app.get('/appointments', tokenVerify, async (req, res) => {
+            const email = req.query.email
+            // console.log(date)
+            // console.log('get method',req.decodedEmail, email);4
+            if (req.decodedEmail === email) {
+                const date = new Date(req.query.date).toLocaleDateString()
+                const query = { email: email, date: date }
+
+                const cursor = await appointmentCollecton.find(query)
+                const result = await cursor.toArray()
+                res.json(result)
+            }
+            // console.log(result)
+            else {
+                res.status(401).send('un-authorize')
+            }
+        })
+
+        // ...........................................
+        // Register new user Save to DB
+        // ...........................................
+        app.post('/users', async (req, res) => {
+            const user = req.body
+            console.log(req.body);
+            const result = await usersCollecton.insertOne(user)
+            res.
+                json(result)
+        })
+
+        // ...........................................
+        // Checking Googlelog in user  new or Existing user. 
+        // ...........................................
+        app.put('/users', async (req, res) => {
+            const user = req.body
+            console.log(req.body);
+            const filter = { email: user.email }
+            const options = { upsert: true };
+            const updatedoc = { $set: user }
+            const result = await usersCollecton.updateOne(filter, updatedoc, options)
+            res.json(result)
+        })
+
+        // ...........................................
+        // Admin can make a new Admin 
+        // ...........................................
+        app.put('/make/admin', tokenVerify, async (req, res) => {
+
+
+            const requesterEmail = req.decodedEmail;
+            console.log('requsterEmail ', requesterEmail)
+            if (requesterEmail) {
+
+                const requester = { email: requesterEmail }
+                const requesterAccount = await usersCollecton.findOne(requester)
+                if (requesterAccount.email === requesterEmail && requesterAccount.role === "admin") {
+                    const user = req.body
+                    const filter = { email: user.email }
+                    const updatedoc = { $set: { role: 'admin' } }
+                    const result = await usersCollecton.updateOne(filter, updatedoc)
+                    res.json(result)
+                }
+            } else {
+                res.status(403).json({ messeage: "don't  accecss this route" })
+            }
+        })
+
+        // ...........................................
+        // checking logging user isAdmin or not Admin 
+        // ...........................................
+        app.get('/checkuser/admin/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            // console.log(query)
+            const user = await usersCollecton.findOne(query)
+
+            let isAdmin = false
+            if (user?.role) {
+                isAdmin = true
+            }
+            res.json({ isAdmin })
+        })
+
+
+        app.delete('/delete/appointments', async (req, res) => {
+            const id= (req.body.id)
+            const query = { _id: ObjectId(id) }
+            
+            const result = await appointmentCollecton.deleteOne(query);
+console.log(result);
+            if (result.deletedCount === 1) {
+                res.status(202).json(result)
+            }
+            else {
+                res.status(400)
+            }
+        })
+    }
+
+    finally {
         // await client.close();
     }
 }
 run().catch(console.dir);
 
-
+app.get("/", (req, res) => {
+    res.send({ Message: 'HELLO WORLD' })
+});
 app.listen(port, () => {
-    console.log("listenin at",port);
+    console.log("listenin at", port);
 })
