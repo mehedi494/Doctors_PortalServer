@@ -1,3 +1,5 @@
 node_modules
 .env
 doctors-portal-firebase-adminsdk.json
+package-lock.json
+yarn.lock
