@@ -1,6 +1,6 @@
 {
 "version": 2,
-"name":"doctors-portall-server",
+"name":"doctor-portal-server",
 "builds": [
 {
 "src": "./index.js",
@@ -12,7 +12,7 @@
 
 "src": "/(.*)",
 
-"dest": "./index.js"
+"dest": "/"
 }
 ]
 }
