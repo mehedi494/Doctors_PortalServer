@@ -25,13 +25,13 @@ const serviceAccount = {
     token_uri: process.env.FIREBASE_ADMIN_TOKEN_URI,
     auth_provider_x509_cert_url: process.env.FIREBASE_ADMIN_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_ADMIN_CLIENT_X509_CERT_URL
-}
+};
 
 admin.initializeApp({
     credential: admin.credential.cert((serviceAccount))
 })
 
-console.log(serviceAccount)
+// console.log(serviceAccount)  
 
 
 
@@ -190,5 +190,5 @@ app.get("/", (req, res) => {
     res.send({ Message: 'HELLO WORLD' })
 });
 app.listen(port, () => {
-    console.log("listenin at", port);
+    console.log("listen at", port);
 })
