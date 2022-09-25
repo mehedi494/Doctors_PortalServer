@@ -1,24 +1,40 @@
 const express = require('express');
 require('dotenv').config()
+
 const app = express();
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const ObjectId= require ('mongodb').ObjectId
-const admin = require("firebase-admin");
+const ObjectId = require('mongodb').ObjectId
 
 
-const serviceAccount = require("./doctors-portal-firebase-adminsdk.json");
-const { query } = require('express');
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
-
-
-
-const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
+const admin = require("firebase-admin");
+
+const port = process.env.PORT || 5000;
+
+
+const serviceAccount = {
+    type: process.env.FIREBASE_ADMIN_TYPE,
+    project_id: process.env.FIREBASE_ADMIN_PROJECT_ID,
+    private_key_id: process.env.FIREBASE_ADMIN_PRIVATE_KEY_ID,
+    private_key: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
+    client_email: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+    client_id: process.env.FIREBASE_ADMIN_CLIENT_ID,
+    auth_uri: process.env.FIREBASE_ADMIN_AUTH_URI,
+    token_uri: process.env.FIREBASE_ADMIN_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.FIREBASE_ADMIN_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.FIREBASE_ADMIN_CLIENT_X509_CERT_URL
+}
+
+admin.initializeApp({
+    credential: admin.credential.cert((serviceAccount))
+})
+
+console.log(serviceAccount)
+
+
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.9hokh.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -89,7 +105,7 @@ async function run() {
         // ...........................................
         app.post('/users', async (req, res) => {
             const user = req.body
-            console.log(req.body);
+            // console.log(req.body);
             const result = await usersCollecton.insertOne(user)
             res.
                 json(result)
@@ -115,7 +131,7 @@ async function run() {
 
 
             const requesterEmail = req.decodedEmail;
-            console.log('requsterEmail ', requesterEmail)
+            // console.log('requsterEmail ', requesterEmail)
             if (requesterEmail) {
 
                 const requester = { email: requesterEmail }
@@ -150,11 +166,11 @@ async function run() {
 
 
         app.delete('/delete/appointments', async (req, res) => {
-            const id= (req.body.id)
+            const id = (req.body.id)
             const query = { _id: ObjectId(id) }
-            
+
             const result = await appointmentCollecton.deleteOne(query);
-console.log(result);
+            // console.log(result);
             if (result.deletedCount === 1) {
                 res.status(202).json(result)
             }
