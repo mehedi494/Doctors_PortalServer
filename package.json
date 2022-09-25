@@ -1,8 +1,10 @@
 {
   "name": "doctor-portal-server",
   "version": "1.0.0",
+  
   "description": "deploy express to vercel",
   "main": "index.js",
+  "type":"module",
   "engines":{
     "node":"14.x"},
   "scripts": {
