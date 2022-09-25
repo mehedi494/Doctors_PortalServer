@@ -1,22 +1,22 @@
 {
   "name": "doctor-portal-server",
   "version": "1.0.0",
-  
   "description": "deploy express to vercel",
   "main": "index.js",
-  "type":"commonjs",
-  "engines":{
-    "node":"16.x"},
+  "type": "commonjs",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "node index.js",
     "start-dev": "nodemon index.js"
-    
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.2",
-    "firebase-admin": "^11.0.1"
+    "firebase-admin": "^11.0.1",
+    "generator-express-es6": "^1.1.0"
   }
 }
