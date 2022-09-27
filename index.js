@@ -32,7 +32,7 @@ admin.initializeApp({
 })
 
 
-console.log(admin.initializeApp);
+// console.log(admin.initializeApp);
 
 
 
