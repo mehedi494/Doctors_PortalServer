@@ -32,7 +32,7 @@ admin.initializeApp({
 })
 
 
-
+console.log(admin.initializeApp);
 
 
 
@@ -185,7 +185,7 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get("/", (req, res) => {
+app.get("/test", (req, res) => {
     res.send({ Message: 'HELLO WORLD' })
 });
 app.listen(port, () => {

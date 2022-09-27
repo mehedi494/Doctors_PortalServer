@@ -618,6 +618,13 @@
   "resolved" "https://registry.npmjs.org/ent/-/ent-2.2.0.tgz"
   "version" "2.2.0"
 
+"env-parser@^1.0.1":
+  "integrity" "sha512-3GHJyYK5GfW/PyTgLjH0emDs36/Mmaemj2e2T31PZ5xmFy6VKWO5F0O+TP9GE3YBw0xGOqoMfJAwkpxUeEStEQ=="
+  "resolved" "https://registry.npmjs.org/env-parser/-/env-parser-1.0.1.tgz"
+  "version" "1.0.1"
+  dependencies:
+    "through" "~2.3.4"
+
 "escalade@^3.1.1":
   "integrity" "sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw=="
   "resolved" "https://registry.npmjs.org/escalade/-/escalade-3.1.1.tgz"
@@ -1648,6 +1655,11 @@
   "integrity" "sha512-/0TJD42KDnVwKmDK6jj3xP7E2MG7SHAOG4tyTgyUCRPdHwvkquYNLEQltmdMa3owq3TkddCVcTsoctJI8VQNKA=="
   "resolved" "https://registry.npmjs.org/text-decoding/-/text-decoding-1.0.0.tgz"
   "version" "1.0.0"
+
+"through@~2.3.4":
+  "integrity" "sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg=="
+  "resolved" "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
+  "version" "2.3.8"
 
 "to-regex-range@^5.0.1":
   "integrity" "sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ=="
