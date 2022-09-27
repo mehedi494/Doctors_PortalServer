@@ -35,7 +35,7 @@ admin.initializeApp({
 })
 
 
-console.log(serviceAccount);
+
 
 
 
